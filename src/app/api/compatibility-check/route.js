@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { generateRandomKeys } from "paillier-bigint";
 import { NextResponse } from "next/server";
 import {logAction} from "@/lib/logger";
