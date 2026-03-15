@@ -1,4 +1,5 @@
 export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
 import { generateRandomKeys } from "paillier-bigint";
 import { NextResponse } from "next/server";
