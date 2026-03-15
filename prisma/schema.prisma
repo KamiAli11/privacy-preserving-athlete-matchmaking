@@ -1,0 +1,67 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["relationJoins"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email                String                    @unique
+  firstName                 String?
+  lastName                 String?
+  password                String
+  createdAt            DateTime                  @default(now())
+
+  logs ActivityLog[]
+}
+
+model Athlete {
+  id          String   @id @default(cuid())
+  firstName   String
+  lastName    String
+  gender      String?
+  dateOfBirth DateTime
+  weightClass String   // e.g. "Lightweight", "Welterweight"
+  licenseId   String   @unique
+  // Private fields – not shown on dashboard
+  medicalOk   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  requested RequestedAthlete[]
+}
+
+model MatchRequest {
+  id             String   @id @default(cuid())
+  createdAt      DateTime @default(now())
+  status         String   @default("pending")
+  reason         String?
+  requestedById  String
+
+  athletes       RequestedAthlete[]
+}
+
+model RequestedAthlete {
+  matchRequestId String
+  athleteId      String
+  matchRequest   MatchRequest @relation(fields: [matchRequestId], references: [id])
+  athlete        Athlete       @relation(fields: [athleteId], references: [id], onDelete: Cascade) // <-- here
+
+  @@id([matchRequestId, athleteId])
+}
+
+model ActivityLog {
+  id        String   @id @default(cuid())
+  action    String
+  metadata  String?
+  userId    String?
+  createdAt DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id])
+}
+
+
